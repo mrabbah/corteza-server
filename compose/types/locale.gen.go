@@ -23,6 +23,7 @@ type (
 
 // Types and stuff
 const (
+	ChartResourceTranslationType       = "compose:chart"
 	ModuleResourceTranslationType      = "compose:module"
 	ModuleFieldResourceTranslationType = "compose:module-field"
 	NamespaceResourceTranslationType   = "compose:namespace"
@@ -31,6 +32,7 @@ const (
 
 var (
 	// @todo can we remove LocaleKey struct for string constant?
+	LocaleKeyChartConfigReportsReportIDYAxis                = LocaleKey{Path: "config.reports.{{reportID}}.yAxis"}
 	LocaleKeyModuleName                                     = LocaleKey{Path: "name"}
 	LocaleKeyModuleFieldLabel                               = LocaleKey{Path: "label"}
 	LocaleKeyModuleFieldMetaDescriptionView                 = LocaleKey{Path: "meta.description.view"}
@@ -56,6 +58,50 @@ var (
 	LocaleKeyPagePageBlockBlockIDButtonButtonIDLabel        = LocaleKey{Path: "pageBlock.{{blockID}}.button.{{buttonID}}.label"}
 	LocaleKeyPagePageBlockBlockIDContentBody                = LocaleKey{Path: "pageBlock.{{blockID}}.content.body"}
 )
+
+// ResourceTranslation returns string representation of Locale resource for Chart by calling ChartResourceTranslation fn
+//
+// Locale resource is in "compose:chart/..." format
+//
+// This function is auto-generated
+func (r Chart) ResourceTranslation() string {
+	return ChartResourceTranslation(r.NamespaceID, r.ID)
+}
+
+// ChartResourceTranslation returns string representation of Locale resource for Chart
+//
+// Locale resource is in the compose:chart/... format
+//
+// This function is auto-generated
+func ChartResourceTranslation(NamespaceID uint64, ID uint64) string {
+	cpts := []interface{}{
+		ChartResourceTranslationType,
+		strconv.FormatUint(NamespaceID, 10),
+		strconv.FormatUint(ID, 10),
+	}
+
+	return fmt.Sprintf(ChartResourceTranslationTpl(), cpts...)
+}
+
+func ChartResourceTranslationTpl() string {
+	return "%s/%s/%s"
+}
+
+func (r *Chart) DecodeTranslations(tt locale.ResourceTranslationIndex) {
+	var aux *locale.ResourceTranslation
+	// @fixme issue happens when there is no translation on main struct
+	_ = aux
+
+	r.decodeTranslations(tt)
+}
+
+func (r *Chart) EncodeTranslations() (out locale.ResourceTranslationSet) {
+	out = locale.ResourceTranslationSet{}
+
+	out = append(out, r.encodeTranslations()...)
+
+	return out
+}
 
 // ResourceTranslation returns string representation of Locale resource for Module by calling ModuleResourceTranslation fn
 //
@@ -87,6 +133,8 @@ func ModuleResourceTranslationTpl() string {
 
 func (r *Module) DecodeTranslations(tt locale.ResourceTranslationIndex) {
 	var aux *locale.ResourceTranslation
+	// @fixme issue happens when there is no translation on main struct
+	_ = aux
 
 	if aux = tt.FindByKey(LocaleKeyModuleName.Path); aux != nil {
 		r.Name = aux.Msg
@@ -138,6 +186,8 @@ func ModuleFieldResourceTranslationTpl() string {
 
 func (r *ModuleField) DecodeTranslations(tt locale.ResourceTranslationIndex) {
 	var aux *locale.ResourceTranslation
+	// @fixme issue happens when there is no translation on main struct
+	_ = aux
 
 	if aux = tt.FindByKey(LocaleKeyModuleFieldLabel.Path); aux != nil {
 		r.Label = aux.Msg
@@ -214,6 +264,8 @@ func NamespaceResourceTranslationTpl() string {
 
 func (r *Namespace) DecodeTranslations(tt locale.ResourceTranslationIndex) {
 	var aux *locale.ResourceTranslation
+	// @fixme issue happens when there is no translation on main struct
+	_ = aux
 
 	if aux = tt.FindByKey(LocaleKeyNamespaceName.Path); aux != nil {
 		r.Name = aux.Msg
@@ -282,6 +334,8 @@ func PageResourceTranslationTpl() string {
 
 func (r *Page) DecodeTranslations(tt locale.ResourceTranslationIndex) {
 	var aux *locale.ResourceTranslation
+	// @fixme issue happens when there is no translation on main struct
+	_ = aux
 
 	if aux = tt.FindByKey(LocaleKeyPageTitle.Path); aux != nil {
 		r.Title = aux.Msg

@@ -157,12 +157,16 @@ func (svc resourceTranslationsManager) {{ .expIdent }}(ctx context.Context, {{ r
 		k         types.LocaleKey
 	)
 
+    // @fixme
+    _ = k
 	res, err = svc.load{{ .expIdent }}(ctx, svc.store, {{ range .references }}{{ .param }}, {{ end }})
 	if err != nil {
 		return nil, err
 	}
 
 	for _, tag := range svc.locale.Tags() {
+	// @fixme
+	_ = tag
 	{{- range .keys}}
 		{{- if not .customHandler }}
 			k = types.{{ .struct }}

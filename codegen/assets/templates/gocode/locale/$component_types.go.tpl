@@ -74,6 +74,8 @@ func {{ .expIdent }}ResourceTranslationTpl() string {
 
 func (r *{{ .expIdent }}) DecodeTranslations(tt locale.ResourceTranslationIndex) {
 	var aux *locale.ResourceTranslation
+	// @fixme issue happens when there is no translation on main struct
+	_ = aux
 
 	{{- range .keys }}
 		{{ if .decodeFunc }}

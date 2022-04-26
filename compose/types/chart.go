@@ -3,6 +3,9 @@ package types
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"github.com/cortezaproject/corteza-server/pkg/locale"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cortezaproject/corteza-server/pkg/filter"
@@ -64,6 +67,37 @@ type (
 		filter.Paging
 	}
 )
+
+func (c Chart) decodeTranslations(tt locale.ResourceTranslationIndex) {
+	var aux *locale.ResourceTranslation
+
+	for i := range c.Config.Reports {
+		rpl := strings.NewReplacer("{{reportID}}", strconv.Itoa(i))
+
+		if aux = tt.FindByKey(rpl.Replace(LocaleKeyChartConfigReportsReportIDYAxis.Path)); aux != nil {
+			// @todo ???
+			c.Config.Reports[i].YAxis["label"] = aux.Msg
+		}
+	}
+}
+
+func (c Chart) encodeTranslations() (out locale.ResourceTranslationSet) {
+	out = make(locale.ResourceTranslationSet, 0, 12)
+
+	for i, report := range c.Config.Reports {
+		rpl := strings.NewReplacer("{{reportID}}", strconv.Itoa(i))
+
+		if _, ok := report.YAxis["label"]; ok {
+			out = append(out, &locale.ResourceTranslation{
+				Resource: c.ResourceTranslation(),
+				Key:      rpl.Replace(LocaleKeyChartConfigReportsReportIDYAxis.Path),
+				Msg:      report.YAxis["label"].(string),
+			})
+		}
+	}
+
+	return
+}
 
 // FindByHandle finds chart by it's handle
 func (set ChartSet) FindByHandle(handle string) *Chart {

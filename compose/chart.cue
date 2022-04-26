@@ -16,4 +16,15 @@ chart: schema.#resource & {
 			"delete": {}
 		}
 	}
+
+	locale: {
+		extended: true
+
+		keys: {
+			configReportsYaxis: {
+				path: ["config", "reports", {part: "reportID", var: true}, "yAxis"]
+				customHandler: true
+			}
+		}
+	}
 }
