@@ -1,0 +1,101 @@
+package provision
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	cmpTypes "github.com/cortezaproject/corteza-server/compose/types"
+	"github.com/cortezaproject/corteza-server/pkg/filter"
+	"github.com/cortezaproject/corteza-server/store"
+	sysTypes "github.com/cortezaproject/corteza-server/system/types"
+	"go.uber.org/zap"
+)
+
+// Migrates resource translations from the resource
+// struct to the dedicated store (table)
+//
+// While doing this, we also modify some resource substructure:
+//  - chart reports (assign report IDs)
+//
+// Note: we will migrate all translations to current default language
+// If you do not like that, shut down Corteza after migrations and fix this directly in the store
+func migratePost202203ResourceTranslations(ctx context.Context, log *zap.Logger, s store.Storer) (err error) {
+	log.Info("migrating post 202203 resource locales")
+
+	var (
+		migrated = make(map[string]bool)
+	)
+
+	set, _, err := store.SearchResourceTranslations(ctx, s, sysTypes.ResourceTranslationFilter{})
+	set.Walk(func(r *sysTypes.ResourceTranslation) error {
+		var pos = strings.Index(r.Resource, "/")
+		if pos < 0 {
+			return nil
+		}
+
+		migrated[r.Resource[0:pos]] = true
+		return nil
+	})
+
+	if !migrated[cmpTypes.ChartResourceTranslationType] {
+		if err = migrateComposeChartResourceTranslations(ctx, log, s); err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// migrate resource translations for compose chart
+func migrateComposeChartResourceTranslations(ctx context.Context, log *zap.Logger, s store.Storer) error {
+	var (
+		tt   sysTypes.ResourceTranslationSet
+		crtt sysTypes.ResourceTranslationSet
+	)
+	set, _, err := store.SearchComposeCharts(ctx, s, cmpTypes.ChartFilter{Deleted: filter.StateInclusive})
+	if err != nil {
+		return err
+	}
+
+	log.Info("migrating compose charts", zap.Int("count", len(set)))
+
+	return s.Tx(ctx, func(ctx context.Context, s store.Storer) error {
+		return set.Walk(func(res *cmpTypes.Chart) (err error) {
+			if crtt, err = convertComposeChartReportsTranslations(res); err != nil {
+				return err
+			} else {
+				tt = append(tt, crtt...)
+			}
+
+			if err = store.CreateResourceTranslation(ctx, s, tt...); err != nil {
+				return
+			}
+
+			if err = store.UpdateComposeChart(ctx, s, res); err != nil {
+				return
+			}
+
+			return
+		})
+	})
+}
+
+// collects translations for compose chart blocks and alters them (adding block ID)
+func convertComposeChartReportsTranslations(res *cmpTypes.Chart) (sysTypes.ResourceTranslationSet, error) {
+	var tt sysTypes.ResourceTranslationSet
+
+	for i, r := range res.Config.Reports {
+		reportID := i + 1
+		res.Config.Reports[i].ReportID = uint64(reportID)
+		crx := fmt.Sprintf("reports.%d.", reportID)
+
+		if _, ok := r.YAxis["label"]; ok {
+			tt = append(tt,
+				makeResourceTranslation(res, crx+"yAxis.label", r.YAxis["label"].(string)),
+			)
+		}
+	}
+
+	return tt, nil
+}

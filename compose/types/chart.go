@@ -34,6 +34,7 @@ type (
 	}
 
 	ChartConfigReport struct {
+		ReportID   uint64                   `json:"reportID,string,omitempty"`
 		Filter     string                   `json:"filter"`
 		ModuleID   uint64                   `json:"moduleID,string,omitempty"`
 		Metrics    []map[string]interface{} `json:"metrics,omitempty"`
@@ -71,11 +72,13 @@ type (
 func (c Chart) decodeTranslations(tt locale.ResourceTranslationIndex) {
 	var aux *locale.ResourceTranslation
 
-	for i := range c.Config.Reports {
-		rpl := strings.NewReplacer("{{reportID}}", strconv.Itoa(i))
+	for i, report := range c.Config.Reports {
+		reportID := locale.ContentID(report.ReportID, i)
+		rpl := strings.NewReplacer(
+			"{{reportID}}", strconv.FormatUint(reportID, 10),
+		)
 
-		if aux = tt.FindByKey(rpl.Replace(LocaleKeyChartConfigReportsReportIDYAxis.Path)); aux != nil {
-			// @todo ???
+		if aux = tt.FindByKey(rpl.Replace(LocaleKeyChartReportsReportIDYAxisLabel.Path)); aux != nil {
 			c.Config.Reports[i].YAxis["label"] = aux.Msg
 		}
 	}
@@ -85,12 +88,15 @@ func (c Chart) encodeTranslations() (out locale.ResourceTranslationSet) {
 	out = make(locale.ResourceTranslationSet, 0, 12)
 
 	for i, report := range c.Config.Reports {
-		rpl := strings.NewReplacer("{{reportID}}", strconv.Itoa(i))
+		reportID := locale.ContentID(report.ReportID, i)
+		rpl := strings.NewReplacer(
+			"{{reportID}}", strconv.FormatUint(reportID, 10),
+		)
 
 		if _, ok := report.YAxis["label"]; ok {
 			out = append(out, &locale.ResourceTranslation{
 				Resource: c.ResourceTranslation(),
-				Key:      rpl.Replace(LocaleKeyChartConfigReportsReportIDYAxis.Path),
+				Key:      rpl.Replace(LocaleKeyChartReportsReportIDYAxisLabel.Path),
 				Msg:      report.YAxis["label"].(string),
 			})
 		}

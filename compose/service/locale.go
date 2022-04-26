@@ -283,8 +283,8 @@ func (svc resourceTranslationsManager) chartExtended(ctx context.Context, res *t
 		out = append(out, &locale.ResourceTranslation{
 			Resource: res.ResourceTranslation(),
 			Lang:     tag.String(),
-			Key:      types.LocaleKeyChartConfigReportsReportIDYAxis.Path,
-			Msg:      svc.locale.TResourceFor(tag, res.ResourceTranslation(), types.LocaleKeyChartConfigReportsReportIDYAxis.Path),
+			Key:      types.LocaleKeyChartReportsReportIDYAxisLabel.Path,
+			Msg:      svc.locale.TResourceFor(tag, res.ResourceTranslation(), types.LocaleKeyChartReportsReportIDYAxisLabel.Path),
 		})
 	}
 

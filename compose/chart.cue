@@ -22,7 +22,7 @@ chart: schema.#resource & {
 
 		keys: {
 			configReportsYaxis: {
-				path: ["config", "reports", {part: "reportID", var: true}, "yAxis"]
+				path: ["reports", {part: "reportID", var: true}, "yAxis", "label"]
 				customHandler: true
 			}
 		}
