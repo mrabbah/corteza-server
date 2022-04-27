@@ -87,7 +87,7 @@ func convertComposeChartReportsTranslations(res *cmpTypes.Chart) (sysTypes.Resou
 	var tt sysTypes.ResourceTranslationSet
 
 	for i, r := range res.Config.Reports {
-		reportID := id.Next() + uint64(i)
+		reportID := id.Next()
 		res.Config.Reports[i].ReportID = reportID
 		crx := fmt.Sprintf("reports.%d.", reportID)
 

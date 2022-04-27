@@ -172,7 +172,7 @@ func (svc chart) Create(ctx context.Context, new *types.Chart) (*types.Chart, er
 
 		// Ensure page-block IDs
 		for i := range new.Config.Reports {
-			new.Config.Reports[i].ReportID = nextID() + uint64(i)
+			new.Config.Reports[i].ReportID = nextID()
 		}
 
 		if err = store.CreateComposeChart(ctx, s, new); err != nil {
