@@ -3,6 +3,7 @@ package provision
 import (
 	"context"
 	"fmt"
+	"github.com/cortezaproject/corteza-server/pkg/id"
 	"strings"
 
 	cmpTypes "github.com/cortezaproject/corteza-server/compose/types"
@@ -86,8 +87,8 @@ func convertComposeChartReportsTranslations(res *cmpTypes.Chart) (sysTypes.Resou
 	var tt sysTypes.ResourceTranslationSet
 
 	for i, r := range res.Config.Reports {
-		reportID := i + 1
-		res.Config.Reports[i].ReportID = uint64(reportID)
+		reportID := id.Next() + uint64(i)
+		res.Config.Reports[i].ReportID = reportID
 		crx := fmt.Sprintf("reports.%d.", reportID)
 
 		if _, ok := r.YAxis["label"]; ok {

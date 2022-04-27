@@ -274,18 +274,22 @@ func (svc resourceTranslationsManager) pageExtended(ctx context.Context, res *ty
 
 func (svc resourceTranslationsManager) chartExtended(ctx context.Context, res *types.Chart) (out locale.ResourceTranslationSet, err error) {
 	var (
-	//k   types.LocaleKey
-	//aux []*locale.ResourceTranslation
+		k = types.LocaleKeyChartReportsReportIDYAxisLabel
 	)
 
-	for _, tag := range svc.locale.Tags() {
-		// @todo return yAxis translation
-		out = append(out, &locale.ResourceTranslation{
-			Resource: res.ResourceTranslation(),
-			Lang:     tag.String(),
-			Key:      types.LocaleKeyChartReportsReportIDYAxisLabel.Path,
-			Msg:      svc.locale.TResourceFor(tag, res.ResourceTranslation(), types.LocaleKeyChartReportsReportIDYAxisLabel.Path),
-		})
+	for _, report := range res.Config.Reports {
+		rpl := strings.NewReplacer(
+			"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
+		)
+
+		for _, tag := range svc.locale.Tags() {
+			out = append(out, &locale.ResourceTranslation{
+				Resource: res.ResourceTranslation(),
+				Lang:     tag.String(),
+				Key:      rpl.Replace(k.Path),
+				Msg:      svc.locale.TResourceFor(tag, res.ResourceTranslation(), rpl.Replace(k.Path)),
+			})
+		}
 	}
 
 	return
