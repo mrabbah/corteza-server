@@ -21,8 +21,12 @@ chart: schema.#resource & {
 		extended: true
 
 		keys: {
-			configReportsYaxis: {
+			reportsYaxisLabel: {
 				path: ["reports", {part: "reportID", var: true}, "yAxis", "label"]
+				customHandler: true
+			}
+			reportsMetricLabel: {
+				path: ["reports", {part: "reportID", var: true}, "metrics", {part: "metricID", var: true}, "label"]
 				customHandler: true
 			}
 		}

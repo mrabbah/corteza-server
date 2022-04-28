@@ -96,6 +96,19 @@ func convertComposeChartReportsTranslations(res *cmpTypes.Chart) (sysTypes.Resou
 				makeResourceTranslation(res, crx+"yAxis.label", r.YAxis["label"].(string)),
 			)
 		}
+
+		// Ensure chart report metric IDs
+		for j, m := range r.Metrics {
+			metricID := id.Next()
+			res.Config.Reports[i].Metrics[j]["metricID"] = metricID
+			cmx := fmt.Sprintf("reports.%d.metrics.%d.", reportID, metricID)
+
+			if _, ok := m["label"]; ok {
+				tt = append(tt,
+					makeResourceTranslation(res, cmx+"label", m["label"].(string)),
+				)
+			}
+		}
 	}
 
 	return tt, nil

@@ -81,6 +81,17 @@ func (c Chart) decodeTranslations(tt locale.ResourceTranslationIndex) {
 		if aux = tt.FindByKey(rpl.Replace(LocaleKeyChartReportsReportIDYAxisLabel.Path)); aux != nil {
 			c.Config.Reports[i].YAxis["label"] = aux.Msg
 		}
+
+		for j, metric := range report.Metrics {
+			mpl := strings.NewReplacer(
+				"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
+				"{{metricID}}", metric["metricID"].(string),
+			)
+
+			if aux = tt.FindByKey(mpl.Replace(LocaleKeyChartReportsReportIDMetricsMetricIDLabel.Path)); aux != nil {
+				c.Config.Reports[i].Metrics[j]["label"] = aux.Msg
+			}
+		}
 	}
 }
 

@@ -170,9 +170,13 @@ func (svc chart) Create(ctx context.Context, new *types.Chart) (*types.Chart, er
 		new.UpdatedAt = nil
 		new.DeletedAt = nil
 
-		// Ensure page-block IDs
-		for i := range new.Config.Reports {
+		// Ensure chart report IDs
+		for i, report := range new.Config.Reports {
 			new.Config.Reports[i].ReportID = nextID()
+			// Ensure chart report metric IDs
+			for j := range report.Metrics {
+				new.Config.Reports[i].Metrics[j]["metricID"] = nextID()
+			}
 		}
 
 		if err = store.CreateComposeChart(ctx, s, new); err != nil {
@@ -331,6 +335,16 @@ func (svc chart) handleUpdate(ctx context.Context, upd *types.Chart) chartUpdate
 				res.Config.Reports[i] = r
 
 				changes |= chartChanged
+			}
+
+			// Ensure chart report metric IDs
+			for j, m := range r.Metrics {
+				if val, ok := m["metricID"]; !ok || val == 0 {
+					m["metricID"] = nextID()
+					res.Config.Reports[i].Metrics[j] = m
+
+					changes |= chartChanged
+				}
 			}
 		}
 

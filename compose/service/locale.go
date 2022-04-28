@@ -274,7 +274,8 @@ func (svc resourceTranslationsManager) pageExtended(ctx context.Context, res *ty
 
 func (svc resourceTranslationsManager) chartExtended(ctx context.Context, res *types.Chart) (out locale.ResourceTranslationSet, err error) {
 	var (
-		k = types.LocaleKeyChartReportsReportIDYAxisLabel
+		yAxisLabelK  = types.LocaleKeyChartReportsReportIDYAxisLabel
+		metricLabelK = types.LocaleKeyChartReportsReportIDMetricsMetricIDLabel
 	)
 
 	for _, report := range res.Config.Reports {
@@ -286,9 +287,27 @@ func (svc resourceTranslationsManager) chartExtended(ctx context.Context, res *t
 			out = append(out, &locale.ResourceTranslation{
 				Resource: res.ResourceTranslation(),
 				Lang:     tag.String(),
-				Key:      rpl.Replace(k.Path),
-				Msg:      svc.locale.TResourceFor(tag, res.ResourceTranslation(), rpl.Replace(k.Path)),
+				Key:      "Y-Axis Label",
+				//Key:      rpl.Replace(yAxisLabelK.Path),
+				Msg: svc.locale.TResourceFor(tag, res.ResourceTranslation(), rpl.Replace(yAxisLabelK.Path)),
 			})
+		}
+
+		for _, metric := range report.Metrics {
+			mpl := strings.NewReplacer(
+				"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
+				"{{metricID}}", metric["metricID"].(string),
+			)
+
+			for _, tag := range svc.locale.Tags() {
+				out = append(out, &locale.ResourceTranslation{
+					Resource: res.ResourceTranslation(),
+					Lang:     tag.String(),
+					Key:      "Metric Label",
+					//Key:      rpl.Replace(metricLabelK.Path),
+					Msg: svc.locale.TResourceFor(tag, res.ResourceTranslation(), mpl.Replace(metricLabelK.Path)),
+				})
+			}
 		}
 	}
 

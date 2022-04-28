@@ -33,6 +33,7 @@ const (
 var (
 	// @todo can we remove LocaleKey struct for string constant?
 	LocaleKeyChartReportsReportIDYAxisLabel                 = LocaleKey{Path: "reports.{{reportID}}.yAxis.label"}
+	LocaleKeyChartReportsReportIDMetricsMetricIDLabel       = LocaleKey{Path: "reports.{{reportID}}.metrics.{{metricID}}.label"}
 	LocaleKeyModuleName                                     = LocaleKey{Path: "name"}
 	LocaleKeyModuleFieldLabel                               = LocaleKey{Path: "label"}
 	LocaleKeyModuleFieldMetaDescriptionView                 = LocaleKey{Path: "meta.description.view"}
