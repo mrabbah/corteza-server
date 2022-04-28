@@ -294,19 +294,21 @@ func (svc resourceTranslationsManager) chartExtended(ctx context.Context, res *t
 		}
 
 		for _, metric := range report.Metrics {
-			mpl := strings.NewReplacer(
-				"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
-				"{{metricID}}", metric["metricID"].(string),
-			)
+			if _, ok := metric["metricID"]; ok {
+				mpl := strings.NewReplacer(
+					"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
+					"{{metricID}}", metric["metricID"].(string),
+				)
 
-			for _, tag := range svc.locale.Tags() {
-				out = append(out, &locale.ResourceTranslation{
-					Resource: res.ResourceTranslation(),
-					Lang:     tag.String(),
-					Key:      "Metric Label",
-					//Key:      rpl.Replace(metricLabelK.Path),
-					Msg: svc.locale.TResourceFor(tag, res.ResourceTranslation(), mpl.Replace(metricLabelK.Path)),
-				})
+				for _, tag := range svc.locale.Tags() {
+					out = append(out, &locale.ResourceTranslation{
+						Resource: res.ResourceTranslation(),
+						Lang:     tag.String(),
+						Key:      "Metric Label",
+						//Key:      rpl.Replace(metricLabelK.Path),
+						Msg: svc.locale.TResourceFor(tag, res.ResourceTranslation(), mpl.Replace(metricLabelK.Path)),
+					})
+				}
 			}
 		}
 	}
