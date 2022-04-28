@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cortezaproject/corteza-server/pkg/locale"
 	"reflect"
+	"strconv"
 
 	"github.com/cortezaproject/corteza-server/compose/types"
 	"github.com/cortezaproject/corteza-server/pkg/actionlog"
@@ -175,7 +176,7 @@ func (svc chart) Create(ctx context.Context, new *types.Chart) (*types.Chart, er
 			new.Config.Reports[i].ReportID = nextID()
 			// Ensure chart report metric IDs
 			for j := range report.Metrics {
-				new.Config.Reports[i].Metrics[j]["metricID"] = nextID()
+				new.Config.Reports[i].Metrics[j]["metricID"] = strconv.FormatUint(nextID(), 10)
 			}
 		}
 
@@ -340,7 +341,7 @@ func (svc chart) handleUpdate(ctx context.Context, upd *types.Chart) chartUpdate
 			// Ensure chart report metric IDs
 			for j, m := range r.Metrics {
 				if val, ok := m["metricID"]; !ok || val == 0 {
-					m["metricID"] = nextID()
+					m["metricID"] = strconv.FormatUint(nextID(), 10)
 					res.Config.Reports[i].Metrics[j] = m
 
 					changes |= chartChanged

@@ -83,13 +83,15 @@ func (c Chart) decodeTranslations(tt locale.ResourceTranslationIndex) {
 		}
 
 		for j, metric := range report.Metrics {
-			mpl := strings.NewReplacer(
-				"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
-				"{{metricID}}", metric["metricID"].(string),
-			)
+			if metricID, ok := metric["metricID"]; ok {
+				mpl := strings.NewReplacer(
+					"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
+					"{{metricID}}", metricID.(string),
+				)
 
-			if aux = tt.FindByKey(mpl.Replace(LocaleKeyChartReportsReportIDMetricsMetricIDLabel.Path)); aux != nil {
-				c.Config.Reports[i].Metrics[j]["label"] = aux.Msg
+				if aux = tt.FindByKey(mpl.Replace(LocaleKeyChartReportsReportIDMetricsMetricIDLabel.Path)); aux != nil {
+					c.Config.Reports[i].Metrics[j]["label"] = aux.Msg
+				}
 			}
 		}
 	}
@@ -110,6 +112,23 @@ func (c Chart) encodeTranslations() (out locale.ResourceTranslationSet) {
 				Key:      rpl.Replace(LocaleKeyChartReportsReportIDYAxisLabel.Path),
 				Msg:      report.YAxis["label"].(string),
 			})
+		}
+
+		for _, metric := range report.Metrics {
+			if metricID, ok := metric["metricID"]; ok {
+				mpl := strings.NewReplacer(
+					"{{reportID}}", strconv.FormatUint(report.ReportID, 10),
+					"{{metricID}}", metricID.(string),
+				)
+
+				if _, ok = metric["label"]; ok {
+					out = append(out, &locale.ResourceTranslation{
+						Resource: c.ResourceTranslation(),
+						Key:      mpl.Replace(LocaleKeyChartReportsReportIDMetricsMetricIDLabel.Path),
+						Msg:      metric["label"].(string),
+					})
+				}
+			}
 		}
 	}
 
