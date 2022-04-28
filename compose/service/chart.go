@@ -324,6 +324,16 @@ func (svc chart) handleUpdate(ctx context.Context, upd *types.Chart) chartUpdate
 			res.Handle = upd.Handle
 		}
 
+		// Assure ReportIDs
+		for i, r := range res.Config.Reports {
+			if r.ReportID == 0 {
+				r.ReportID = nextID()
+				res.Config.Reports[i] = r
+
+				changes |= chartChanged
+			}
+		}
+
 		if !reflect.DeepEqual(upd.Config, res.Config) {
 			changes |= chartChanged
 			res.Config = upd.Config
