@@ -3,14 +3,13 @@ package provision
 import (
 	"context"
 	"fmt"
-	"github.com/cortezaproject/corteza-server/pkg/id"
-	"strings"
-
 	cmpTypes "github.com/cortezaproject/corteza-server/compose/types"
 	"github.com/cortezaproject/corteza-server/pkg/filter"
+	"github.com/cortezaproject/corteza-server/pkg/id"
 	"github.com/cortezaproject/corteza-server/store"
 	sysTypes "github.com/cortezaproject/corteza-server/system/types"
 	"go.uber.org/zap"
+	"strings"
 )
 
 // Migrates resource translations from the resource
@@ -51,8 +50,7 @@ func migratePost202203ResourceTranslations(ctx context.Context, log *zap.Logger,
 // migrate resource translations for compose chart
 func migrateComposeChartResourceTranslations(ctx context.Context, log *zap.Logger, s store.Storer) error {
 	var (
-		tt   sysTypes.ResourceTranslationSet
-		crtt sysTypes.ResourceTranslationSet
+		tt sysTypes.ResourceTranslationSet
 	)
 	set, _, err := store.SearchComposeCharts(ctx, s, cmpTypes.ChartFilter{Deleted: filter.StateInclusive})
 	if err != nil {
@@ -63,10 +61,8 @@ func migrateComposeChartResourceTranslations(ctx context.Context, log *zap.Logge
 
 	return s.Tx(ctx, func(ctx context.Context, s store.Storer) error {
 		return set.Walk(func(res *cmpTypes.Chart) (err error) {
-			if crtt, err = convertComposeChartReportsTranslations(res); err != nil {
+			if tt, err = convertComposeChartReportsTranslations(res); err != nil {
 				return err
-			} else {
-				tt = append(tt, crtt...)
 			}
 
 			if err = store.CreateResourceTranslation(ctx, s, tt...); err != nil {
@@ -100,7 +96,7 @@ func convertComposeChartReportsTranslations(res *cmpTypes.Chart) (sysTypes.Resou
 		// Ensure chart report metric IDs
 		for j, m := range r.Metrics {
 			metricID := id.Next()
-			res.Config.Reports[i].Metrics[j]["metricID"] = metricID
+			res.Config.Reports[i].Metrics[j]["metricID"] = fmt.Sprintf("%d", metricID)
 			cmx := fmt.Sprintf("reports.%d.metrics.%d.", reportID, metricID)
 
 			if _, ok := m["label"]; ok {
