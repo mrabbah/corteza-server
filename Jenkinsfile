@@ -14,7 +14,8 @@ pipeline {
                 }            
             }
             steps {
-                sh 'make test.all'
+                //sh 'make test.all'
+                sh 'go test -count=1 ./app/... '
             }
         }
         stage('Build Web Console') {
