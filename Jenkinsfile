@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
    
     environment {
         NEXUS_CREDS = credentials('nexus-credentials')
