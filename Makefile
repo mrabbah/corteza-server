@@ -26,7 +26,7 @@ LDFLAGS                = -ldflags "$(LDFLAGS_VERSION) $(LDFLAGS_EXTRA)"
 # Run go test cmd with flags, eg:
 # $> make test.integration TEST_FLAGS="-v"
 # $> make test.integration TEST_FLAGS="-v -run SpecialTest"
-TEST_FLAGS ?= " -count=1 "
+TEST_FLAGS ?= -count=1
 
 COVER_MODE    ?= count
 COVER_PROFILE ?= .cover.out
