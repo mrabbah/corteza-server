@@ -205,7 +205,7 @@ test.store.%: $(GOTEST)
 
 # Runs ALL tests
 test.all: $(GOTEST)
-	$(GOTEST) $(TEST_FLAGS) $(TEST_SUITE_all)
+	XDG_CACHE_HOME="" $(GOTEST) $(TEST_FLAGS) $(TEST_SUITE_all)
 
 # Unit testing testing, system or compose
 test.unit.%: $(GOTEST)
