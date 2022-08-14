@@ -23,6 +23,8 @@ LDFLAGS_VERSION        = -X github.com/cortezaproject/corteza-server/pkg/version
 LDFLAGS_EXTRA         ?=
 LDFLAGS                = -ldflags "$(LDFLAGS_VERSION) $(LDFLAGS_EXTRA)"
 
+GOCACHE				   = /tmp/
+
 # Run go test cmd with flags, eg:
 # $> make test.integration TEST_FLAGS="-v"
 # $> make test.integration TEST_FLAGS="-v -run SpecialTest"
@@ -205,6 +207,7 @@ test.store.%: $(GOTEST)
 
 # Runs ALL tests
 test.all: $(GOTEST)
+	export GOCACHE=/tmp/
 	$(GOTEST) $(TEST_FLAGS) $(TEST_SUITE_all)
 
 # Unit testing testing, system or compose
