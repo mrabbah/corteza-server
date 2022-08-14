@@ -26,7 +26,7 @@ LDFLAGS                = -ldflags "$(LDFLAGS_VERSION) $(LDFLAGS_EXTRA)"
 # Run go test cmd with flags, eg:
 # $> make test.integration TEST_FLAGS="-v"
 # $> make test.integration TEST_FLAGS="-v -run SpecialTest"
-TEST_FLAGS ?=
+TEST_FLAGS ?= "-count=1"
 
 COVER_MODE    ?= count
 COVER_PROFILE ?= .cover.out
@@ -205,7 +205,7 @@ test.store.%: $(GOTEST)
 
 # Runs ALL tests
 test.all: $(GOTEST)
-    GOCACHE=off $(GOTEST) $(TEST_FLAGS) $(TEST_SUITE_all)
+    $(GOTEST) $(TEST_FLAGS) $(TEST_SUITE_all)
 
 # Unit testing testing, system or compose
 test.unit.%: $(GOTEST)
