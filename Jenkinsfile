@@ -48,7 +48,7 @@ pipeline {
                 echo 'Starting to build docker image'
 
                 script {
-                    def cortezaServerImage = docker.build("nexus.rabbahsoft.ma/repository/docker-repo/corteza-server:${BRANCH_NAME}", "VERSION=${BRANCH_NAME} CORTEZA_VERSION=2022.3.4 NEXUS_CREDS=${NEXUS_CREDS}")
+                    def cortezaServerImage = docker.build("mrabbah/corteza-server:${BRANCH_NAME}", "VERSION=${BRANCH_NAME} CORTEZA_VERSION=2022.3.4 NEXUS_CREDS=${NEXUS_CREDS}")
                     cortezaServerImage.push()
                 }
                 
