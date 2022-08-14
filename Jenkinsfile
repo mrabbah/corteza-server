@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
    
     environment {
         NEXUS_CREDS = credentials('nexus-credentials')
@@ -8,8 +8,10 @@ pipeline {
     stages {
         stage('Test') {
             agent {
-                docker { image 'golang:1.17.13' }
-                reuseNode true
+                docker { 
+                    image 'golang:1.17.13' 
+                    reuseNode true
+                }            
             }
             steps {
                 sh 'make test.all'
@@ -17,8 +19,10 @@ pipeline {
         }
         stage('Build Web Console') {
             agent {
-                docker { image 'node:16.16.0' }
-                reuseNode true
+                docker { 
+                    image 'node:16.16.0'
+                    reuseNode true 
+                }
             }
             steps {
                 sh 'cd ./webconsole'
@@ -28,8 +32,10 @@ pipeline {
         }
         stage('Build Server') {
             agent {
-                docker { image 'golang:1.17.13' }
-                reuseNode true
+                docker { 
+                    image 'golang:1.17.13' 
+                    reuseNode true
+                } 
             }
             steps {
                 sh 'make release-clean release'
