@@ -14,6 +14,8 @@ pipeline {
                 }            
             }
             steps {
+                sh 'mkdir -p /.cache/go-build'
+                sh 'chmod -R 777 /.cache'
                 sh 'make test.all'
             }
         }
