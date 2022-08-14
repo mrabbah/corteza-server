@@ -4,12 +4,14 @@ include Makefile.inc
 
 BUILD_FLAVOUR         ?= corteza
 BUILD_TIME            ?= $(shell date +%FT%T%z)
-BUILD_VERSION         ?= $(shell git describe --tags --abbrev=0)
+# BUILD_VERSION         ?= $(shell git describe --tags --abbrev=0)
+BUILD_VERSION         ?= ${BRANCH_NAME}
 BUILD_ARCH            ?= $(shell go env GOARCH)
 BUILD_OS              ?= $(shell go env GOOS)
 BUILD_OS_is_windows    = $(filter windows,$(BUILD_OS))
 BUILD_DEST_DIR        ?= build
-BUILD_NAME             = $(BUILD_FLAVOUR)-server-$(BUILD_VERSION)-$(BUILD_OS)-$(BUILD_ARCH)
+# BUILD_NAME             = $(BUILD_FLAVOUR)-server-$(BUILD_VERSION)-$(BUILD_OS)-$(BUILD_ARCH)
+BUILD_NAME             = $(BUILD_FLAVOUR)-server-$(BUILD_VERSION)
 BUILD_BIN_NAME         = $(BUILD_NAME)$(if $(BUILD_OS_is_windows),.exe,)
 
 RELEASE_BASEDIR        = $(BUILD_DEST_DIR)/pkg/$(BUILD_FLAVOUR)-server
@@ -253,3 +255,5 @@ $(PROTOC):
 	endif
 
 #
+
+toto: echo $(BUILD_VERSION)
