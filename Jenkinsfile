@@ -15,8 +15,7 @@ pipeline {
             }
             steps {
                 //sh 'make test.all'
-                sh 'go env'
-                sh 'GOCACHE=/tmp/.cache/go-build go test -count=1 ./app/... '
+                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go env && make test.all'
             }
         }
         stage('Build Web Console') {
@@ -27,9 +26,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'cd ./webconsole'
-                sh 'yarn install'
-                sh 'yarn build'
+                sh 'cd ./webconsole && yarn install && yarn build'
             }
         }
         stage('Build Server') {
@@ -40,7 +37,7 @@ pipeline {
                 } 
             }
             steps {
-                sh 'make release-clean release'
+                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go env && make release-clean release'
                 sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
             }
         }
