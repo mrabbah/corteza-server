@@ -15,7 +15,8 @@ pipeline {
             }
             steps {
                 //sh 'make test.all'
-                sh 'go test -count=1 ./app/... '
+                sh 'go env'
+                sh 'GOCACHE=/tmp/.cache/go-build go test -count=1 ./app/... '
             }
         }
         stage('Build Web Console') {
