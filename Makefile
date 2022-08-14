@@ -205,6 +205,7 @@ test.store.%: $(GOTEST)
 
 # Runs ALL tests
 test.all: $(GOTEST)
+    echo $HOME
 	$(GOTEST) $(TEST_FLAGS) $(TEST_SUITE_all)
 
 # Unit testing testing, system or compose

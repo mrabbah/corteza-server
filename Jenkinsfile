@@ -14,7 +14,8 @@ pipeline {
                 }            
             }
             steps {
-                sh 'export GOCACHE=/tmp/'
+                sh 'export HOME=$pwd'
+                sh 'echo $HOME'
                 sh 'make test.all'
             }
         }
@@ -39,7 +40,8 @@ pipeline {
                 } 
             }
             steps {
-                sh 'export GOCACHE=/tmp/'
+                sh 'export HOME=$pwd'
+                sh 'echo $HOME'
                 sh 'make release-clean release'
                 sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
             }
