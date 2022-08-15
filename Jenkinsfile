@@ -44,6 +44,20 @@ pipeline {
             }
         }
         stage('Build Docker image') {
+            agent {
+                docker { 
+                    image 'docker:dind' 
+                    reuseNode true
+                } 
+            }
+            steps {
+                sh 'pwd'
+                sh 'ls'
+                sh 'docker build mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=2022.3.4 --build-arg NEXUS_CREDS=${NEXUS_CREDS} .'
+            }
+        }
+        
+        /*stage('Build Docker image') {
             
             steps {
                 echo 'Starting to build docker image'
@@ -65,6 +79,6 @@ pipeline {
                 }
                 
             }
-        }
+        }*/
     }
 }
