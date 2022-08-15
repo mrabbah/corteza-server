@@ -8,7 +8,7 @@ pipeline {
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
     }
     stages {
-        stage('Test') {
+        /*stage('Test') {
             agent {
                 docker { 
                     image 'golang:1.17.13' 
@@ -64,7 +64,7 @@ pipeline {
                 
             }
         }
-
+*/
         stage('Deploy') {
             
             steps {
