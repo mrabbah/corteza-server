@@ -10,8 +10,8 @@ ARG WEBAPP_VERSION=${CORTEZA_VERSION}
 ARG NEXUS_CREDS=${NEXUS_CREDS}
 # ARG CORTEZA_SERVER_PATH=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${SERVER_VERSION}.tar.gz
 ARG CORTEZA_SERVER_PATH=./build/corteza-server-${SERVER_VERSION}.tar.gz
-ARG CORTEZA_WEBAPP_PATH=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-${WEBAPP_VERSION}.tar.gz
-ARG CORTEZA_COMPOSE=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-compose-${SERVER_VERSION}.tar.gz
+ARG CORTEZA_WEBAPP_PATH=./build/corteza-webapp-${WEBAPP_VERSION}.tar.gz
+ARG CORTEZA_COMPOSE=./build/corteza-webapp-compose-${SERVER_VERSION}.tar.gz
 
 RUN mkdir /tmp/server
 RUN mkdir /tmp/webapp

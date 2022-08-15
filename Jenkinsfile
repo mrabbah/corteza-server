@@ -3,6 +3,7 @@ pipeline {
    
     environment {
         NEXUS_CREDS = credentials('nexus-credentials')
+        CORTEZA_VERSION = 2022.3.4
         DOCKERUH_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
     }
@@ -46,9 +47,10 @@ pipeline {
         stage('Build Docker image') {
             
             steps {
-                sh 'pwd'
-                sh 'ls'
-                sh 'docker build -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=2022.3.4 --build-arg NEXUS_CREDS=${NEXUS_CREDS} . '
+                sh 'curl -v --user $NEXUS_CREDS https://nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-${CORTEZA_VERSION}.tar.gz --output ./build/corteza-webapp-${CORTEZA_VERSION}.tar.gz'
+                sh 'curl -v --user $NEXUS_CREDS https://nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-compose-${BRANCH_NAME}.tar.gz --output ./build/corteza-webapp-compose-${BRANCH_NAME}.tar.gz'
+                sh 'ls ./build/'
+                sh 'docker build -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=${CORTEZA_VERSION} --build-arg NEXUS_CREDS=${NEXUS_CREDS} . '
             }
         }
         
