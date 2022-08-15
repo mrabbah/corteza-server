@@ -15,7 +15,7 @@ pipeline {
             }
             steps {
                 //sh 'make test.all'
-                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go env && make test.all'
+                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
             }
         }
         stage('Build Web Console') {
@@ -37,7 +37,11 @@ pipeline {
                 } 
             }
             steps {
-                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go env && make release-clean release'
+                sh 'ls build/'
+                sh 'rm -rf build/corteza-server-${BRANCH_NAME}'
+                sh 'rm -rf build/corteza-server-${BRANCH_NAME}.tar.gz'
+                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go build -o build/corteza-server-${BRANCH_NAME} cmd/corteza/main.go'
+                sh 'ls build/'
                 sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
             }
         }
