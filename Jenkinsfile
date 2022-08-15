@@ -40,8 +40,8 @@ pipeline {
                 sh 'ls -l'
                 sh 'rm -rf ./build/corteza-server-${BRANCH_NAME}'
                 sh 'rm -rf ./build/corteza-server-${BRANCH_NAME}.tar.gz'
-                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go build -o ./build/corteza-server-${BRANCH_NAME} cmd/corteza/main.go'
-                sh 'ls -l'
+                sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go build -o ./build/corteza-server-${BRANCH_NAME}.tar.gz cmd/corteza/main.go'
+                sh 'ls -l ./build/'
                 sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
             }
         }
