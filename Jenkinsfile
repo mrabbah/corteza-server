@@ -44,12 +44,7 @@ pipeline {
             }
         }
         stage('Build Docker image') {
-            agent {
-                docker { 
-                    image 'docker:dind' 
-                    reuseNode true
-                } 
-            }
+            
             steps {
                 sh 'pwd'
                 sh 'ls'
