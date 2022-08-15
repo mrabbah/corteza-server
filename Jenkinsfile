@@ -41,7 +41,7 @@ pipeline {
                 sh 'rm -rf ./build/corteza-server-${BRANCH_NAME}'
                 sh 'rm -rf ./build/corteza-server-${BRANCH_NAME}.tar.gz'
                 sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod GOOS=linux GOARCH=amd64 go build  -ldflags "-X github.com/mrabbah/corteza-server/pkg/version.Version=${BRANCH_NAME} " -o ./build/corteza-server-${BRANCH_NAME} cmd/corteza/main.go'
-                sh 'tar -C build/pkg/ -czf build/corteza-server-${BRANCH_NAME}.tar.gz corteza-server'
+                sh 'tar -C ./build/pkg/ -czf ./build/corteza-server-${BRANCH_NAME}.tar.gz corteza-server'
                 sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
             }
         }
