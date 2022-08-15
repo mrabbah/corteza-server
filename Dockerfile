@@ -29,7 +29,7 @@ RUN file "/tmp/server/$(basename $CORTEZA_SERVER_PATH)" | grep -q 'gzip' && \
     tar zxvf "/tmp/server/$(basename $CORTEZA_SERVER_PATH)" -C / || \
     cp -a "/tmp/server" /
 
-RUN mv /tmp/server /corteza
+RUN mv /tmp/server/corteza-server /corteza
 
 WORKDIR /corteza
 

@@ -78,6 +78,7 @@ pipeline {
                     sh 'curl -LO "https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl"' 
                     sh 'chmod u+x ./kubectl'  
                     withKubeConfig([credentialsId: 'k8s-token', serverUrl: 'https://rancher.rabbahsoft.ma/k8s/clusters/local']) {
+                        sh './kubectl delete -f k8s/deployment-dev.yml'
                         sh './kubectl apply -f k8s/deployment-dev.yml'
                     }           
                 }
