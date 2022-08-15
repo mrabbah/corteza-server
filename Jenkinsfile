@@ -26,7 +26,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'cd ./webconsole && yarn install && yarn build'
+                sh 'cd ./webconsole && yarn install && yarn build && cd ..'
             }
         }
         stage('Build Server') {
