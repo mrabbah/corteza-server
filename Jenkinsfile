@@ -52,7 +52,7 @@ pipeline {
                 echo 'Starting to build docker image'
 
                 script {
-                    def cortezaServerImage = docker.build("mrabbah/corteza-server:${BRANCH_NAME}", " . --build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=2022.3.4 --build-arg NEXUS_CREDS=${NEXUS_CREDS}")
+                    def cortezaServerImage = docker.build("mrabbah/corteza-server:${BRANCH_NAME}", "--build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=2022.3.4 --build-arg NEXUS_CREDS=${NEXUS_CREDS} .")
                 }
                 
             }
