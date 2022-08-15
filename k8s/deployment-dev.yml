@@ -47,3 +47,38 @@ spec:
           name: http
           protocol: TCP
       restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: corteza-svc
+  namespace: corteza-dev
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    workload.user.cattle.io/workloadselector: apps.deployment-default-corteza-server
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: corteza-ingress
+  namespace: corteza-dev
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: corteza-dev.rabbahsoft.ma
+    http:
+      paths:
+      - backend:
+          service:
+            name: corteza-svc
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
