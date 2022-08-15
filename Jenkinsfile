@@ -3,6 +3,7 @@ pipeline {
    
     environment {
         NEXUS_CREDS = credentials('nexus-credentials')
+        DOCKERUH_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
     }
     stages {
@@ -51,12 +52,22 @@ pipeline {
                 echo 'Starting to build docker image'
 
                 script {
-                    def cortezaServerImage = docker.build("mrabbah/corteza-server:${BRANCH_NAME}", "VERSION=${BRANCH_NAME} CORTEZA_VERSION=2022.3.4 NEXUS_CREDS=${NEXUS_CREDS}")
-                    cortezaServerImage.push()
+                    def cortezaServerImage = docker.build("mrabbah/corteza-server:${BRANCH_NAME}", "--build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=2022.3.4 --build-arg NEXUS_CREDS=${NEXUS_CREDS}")
                 }
                 
             }
         }
-
+        stage('Push Docker image') {
+            
+            steps {
+                echo 'Pushing docker image'
+                script {
+                    docker.withRegistry( '', DOCKERUH_CREDS ) { 
+                        cortezaServerImage.push()
+                    }                 
+                }
+                
+            }
+        }
     }
 }
