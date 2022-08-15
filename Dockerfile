@@ -6,7 +6,8 @@ ARG VERSION=2021.9.0
 ARG NEXUS_CREDS
 ARG SERVER_VERSION=${VERSION}
 ARG WEBAPP_VERSION=${CORTEZA_VERSION}
-ARG CORTEZA_SERVER_PATH=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${SERVER_VERSION}.tar.gz
+# ARG CORTEZA_SERVER_PATH=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${SERVER_VERSION}.tar.gz
+ARG CORTEZA_SERVER_PATH=./build/corteza-server-${SERVER_VERSION}.tar.gz
 ARG CORTEZA_WEBAPP_PATH=https://releases.cortezaproject.org/files/corteza-webapp-${WEBAPP_VERSION}.tar.gz
 ARG CORTEZA_COMPOSE=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-compose-${SERVER_VERSION}.tar.gz
 
