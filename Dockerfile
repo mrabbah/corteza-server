@@ -3,9 +3,11 @@ FROM alpine:3 as build-stage
 
 # use docker build --build-arg VERSION=2021.9.0 .
 ARG VERSION=2021.9.0
-ARG NEXUS_CREDS
+ARG CORTEZA_VERSION=2022.3.4
+ARG NEXUS_CREDS=x:y
 ARG SERVER_VERSION=${VERSION}
 ARG WEBAPP_VERSION=${CORTEZA_VERSION}
+ARG NEXUS_CREDS=${NEXUS_CREDS}
 # ARG CORTEZA_SERVER_PATH=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${SERVER_VERSION}.tar.gz
 ARG CORTEZA_SERVER_PATH=./build/corteza-server-${SERVER_VERSION}.tar.gz
 ARG CORTEZA_WEBAPP_PATH=https://releases.cortezaproject.org/files/corteza-webapp-${WEBAPP_VERSION}.tar.gz
