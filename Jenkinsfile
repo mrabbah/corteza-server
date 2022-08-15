@@ -4,7 +4,7 @@ pipeline {
     environment {
         NEXUS_CREDS = credentials('nexus-credentials')
         CORTEZA_VERSION = "2022.3.4"
-        DOCKERUH_CREDS = credentials('dockerhub-credentials')
+        DOCKERHUB_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
     }
     stages {
@@ -41,7 +41,7 @@ pipeline {
                 sh 'rm -rf ./build/corteza-server-${BRANCH_NAME}'
                 sh 'rm -rf ./build/corteza-server-${BRANCH_NAME}.tar.gz'
                 sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go build -o ./build/corteza-server-${BRANCH_NAME}.tar.gz cmd/corteza/main.go'
-                // sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
+                sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
             }
         }
         stage('Build Docker image') {
@@ -49,33 +49,20 @@ pipeline {
             steps {
                 sh 'curl -v --user $NEXUS_CREDS https://nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-${CORTEZA_VERSION}.tar.gz --output ./build/corteza-webapp-${CORTEZA_VERSION}.tar.gz'
                 sh 'curl -v --user $NEXUS_CREDS https://nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-compose-${BRANCH_NAME}.tar.gz --output ./build/corteza-webapp-compose-${BRANCH_NAME}.tar.gz'
-                sh 'ls ./build/'
                 sh 'docker build -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=${CORTEZA_VERSION} --build-arg NEXUS_CREDS=${NEXUS_CREDS} . '
             }
         }
         
-        /*stage('Build Docker image') {
-            
-            steps {
-                echo 'Starting to build docker image'
-
-                script {
-                    def cortezaServerImage = docker.build("mrabbah/corteza-server:${BRANCH_NAME}", "--build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=2022.3.4 --build-arg NEXUS_CREDS=${NEXUS_CREDS} .")
-                }
-                
-            }
-        }
         stage('Push Docker image') {
             
             steps {
                 echo 'Pushing docker image'
                 script {
-                    docker.withRegistry( '', DOCKERUH_CREDS ) { 
-                        cortezaServerImage.push()
-                    }                 
+                    sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'    
+                    sh 'docker push mrabbah/corteza-server:${BRANCH_NAME}'           
                 }
                 
             }
-        }*/
+        }
     }
 }
