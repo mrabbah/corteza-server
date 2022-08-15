@@ -3,7 +3,7 @@ pipeline {
    
     environment {
         NEXUS_CREDS = credentials('nexus-credentials')
-        CORTEZA_VERSION = 2022.3.4
+        CORTEZA_VERSION = "2022.3.4"
         DOCKERUH_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
     }
