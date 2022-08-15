@@ -64,5 +64,22 @@ pipeline {
                 
             }
         }
+
+        stage('Deploy') {
+            
+            steps {
+                script {
+                    withKubeConfig([credentialsId: 'k8s-token', serverUrl: 'https://38.242.248.191:6443']) {
+                        sh 'kubectl apply -f k8s/deployment-dev.yml'
+                    }           
+                }
+                
+            }
+        }
+    }
+    post {
+        always {
+            sh 'docker logout'
+        }
     }
 }

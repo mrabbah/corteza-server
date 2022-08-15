@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    workload.user.cattle.io/workloadselector: apps.deployment-default-corteza-server
+  name: corteza-server
+  namespace: corteza-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: apps.deployment-default-corteza-server
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: apps.deployment-default-corteza-server
+    spec:
+      containers:
+      - env:
+        - name: VIRTUAL_HOST
+          value: corteza-dev.rabbahsoft.ma
+        - name: DB_DSN
+          value: sqlite3://file::memory:?cache=shared&mode=memory
+        - name: HTTP_WEBAPP_ENABLED
+          value: "true"
+        - name: LOG_LEVEL
+          value: info
+        - name: LOG_DEBUG
+          value: "true"
+        - name: CORREDOR_ENABLED
+          value: "false"
+        - name: HTTP_SERVER_WEB_CONSOLE_ENABLED
+          value: "true"
+        - name: HTTP_SERVER_WEB_CONSOLE_USERNAME
+          value: contact@rabbahsoft.ma
+        - name: HTTP_SERVER_WEB_CONSOLE_PASSWORD
+          value: CXrtvnN6A6si2kz
+        - name: DISCOVERY_ENABLED
+          value: "false"
+        - name: ENVIRONMENT
+          value: dev
+        image: mrabbah/corteza-server:r2022.3.1.x
+        imagePullPolicy: Always
+        name: corteza-server-container
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+      restartPolicy: Always
