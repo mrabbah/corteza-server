@@ -1,27 +1,14 @@
 # build-stage
 FROM alpine:3 as build-stage
 
-# use docker build --build-arg VERSION=2021.9.0 .
-ARG VERSION=2021.9.0
-ARG CORTEZA_VERSION=2022.3.4
-ARG NEXUS_CREDS=x:y
+# use docker build --build-arg VERSION=r2022.3.1.x .
+ARG VERSION=r2022.3.1.x
 ARG SERVER_VERSION=${VERSION}
-ARG WEBAPP_VERSION=${CORTEZA_VERSION}
-ARG NEXUS_CREDS=${NEXUS_CREDS}
-# ARG CORTEZA_SERVER_PATH=https://${NEXUS_CREDS}@nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${SERVER_VERSION}.tar.gz
 ARG CORTEZA_SERVER_PATH=./build/corteza-server-${SERVER_VERSION}.tar.gz
-ARG CORTEZA_WEBAPP_PATH=./build/corteza-webapp-${WEBAPP_VERSION}.tar.gz
-ARG CORTEZA_COMPOSE=./build/corteza-webapp-compose-${SERVER_VERSION}.tar.gz
 
 RUN mkdir /tmp/server
-RUN mkdir /tmp/webapp
 
 ADD $CORTEZA_SERVER_PATH /tmp/server
-ADD $CORTEZA_WEBAPP_PATH /tmp/webapp
-
-RUN rm -Rf /tmp/webapp/corteza-webapp-compose*
-
-ADD $CORTEZA_COMPOSE /tmp/webapp
 
 RUN apk update && apk add --no-cache file
 
@@ -32,13 +19,6 @@ RUN file "/tmp/server/$(basename $CORTEZA_SERVER_PATH)" | grep -q 'gzip' && \
 RUN mv /tmp/server/corteza-server /corteza
 
 WORKDIR /corteza
-
-RUN rm -rf /corteza/webapp
-
-RUN file "/tmp/webapp/$(basename $CORTEZA_WEBAPP_PATH)" | grep -q 'gzip' && \
-    mkdir /corteza/webapp && tar zxvf "/tmp/webapp/$(basename $CORTEZA_WEBAPP_PATH)" -C /corteza/webapp || \
-    cp -a "/tmp/webapp" /corteza/webapp
-
 
 # deploy-stage
 FROM ubuntu:20.04
@@ -52,8 +32,7 @@ RUN apt-get -y update \
 ENV STORAGE_PATH "/data"
 ENV CORREDOR_ADDR "corredor:80"
 ENV HTTP_ADDR "0.0.0.0:80"
-ENV HTTP_WEBAPP_ENABLED "true"
-ENV HTTP_WEBAPP_BASE_DIR "/corteza/webapp"
+ENV HTTP_WEBAPP_ENABLED "false"
 ENV PATH "/corteza/bin:${PATH}"
 
 WORKDIR /corteza

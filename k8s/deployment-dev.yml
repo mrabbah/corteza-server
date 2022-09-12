@@ -1,3 +1,39 @@
+apiVersion: v1
+data:
+  corteza-dsn: cG9zdGdyZXM6Ly9jb3J0ZXphLWRldi11c2VyOmdNJTNFTERmMyUzRWRsc2JOU1NIJTdDVXBZVDBEQ0BoaXBwby1oYS1wZ2JvdW5jZXIucGdvLnN2Yzo1NDMyL2NvcnRlemEtZGV2LWRi
+  dbname: Y29ydGV6YS1kZXYtZGI=
+  host: aGlwcG8taGEtcHJpbWFyeS5wZ28uc3Zj
+  jdbc-uri: amRiYzpwb3N0Z3Jlc3FsOi8vaGlwcG8taGEtcHJpbWFyeS5wZ28uc3ZjOjU0MzIvY29ydGV6YS1kZXYtZGI/cGFzc3dvcmQ9Z00lM0VMRGYzJTNFZGxzYk5TU0glN0NVcFlUMERDJnVzZXI9Y29ydGV6YS1kZXYtdXNlcg==
+  password: Z00+TERmMz5kbHNiTlNTSHxVcFlUMERD
+  pgbouncer-host: aGlwcG8taGEtcGdib3VuY2VyLnBnby5zdmM=
+  pgbouncer-jdbc-uri: amRiYzpwb3N0Z3Jlc3FsOi8vaGlwcG8taGEtcGdib3VuY2VyLnBnby5zdmM6NTQzMi9jb3J0ZXphLWRldi1kYj9wYXNzd29yZD1nTSUzRUxEZjMlM0VkbHNiTlNTSCU3Q1VwWVQwREMmcHJlcGFyZVRocmVzaG9sZD0wJnVzZXI9Y29ydGV6YS1kZXYtdXNlcg==
+  pgbouncer-port: NTQzMg==
+  pgbouncer-uri: cG9zdGdyZXNxbDovL2NvcnRlemEtZGV2LXVzZXI6Z00lM0VMRGYzJTNFZGxzYk5TU0glN0NVcFlUMERDQGhpcHBvLWhhLXBnYm91bmNlci5wZ28uc3ZjOjU0MzIvY29ydGV6YS1kZXYtZGI=
+  port: NTQzMg==
+  uri: cG9zdGdyZXNxbDovL2NvcnRlemEtZGV2LXVzZXI6Z00lM0VMRGYzJTNFZGxzYk5TU0glN0NVcFlUMERDQGhpcHBvLWhhLXByaW1hcnkucGdvLnN2Yzo1NDMyL2NvcnRlemEtZGV2LWRi
+  user: Y29ydGV6YS1kZXYtdXNlcg==
+  verifier: U0NSQU0tU0hBLTI1NiQ0MDk2OjBoVzM0S1c3UDFlQ3FMNHI3R2xaTHc9PSRnKzlxUCtRTW5lNnVhbHVGYU1SVjBlcTA0K00xcHpFczNjZHptTTlPTTNNPTowdjJrWmlFRlp4VkdKeHpza2pLWHBrM0c2RDM0clpOQ0JZNFIyMHJETnhBPQ==
+kind: Secret
+metadata:
+  name: corteza-dev-secrets
+  namespace: corteza-dev
+type: Opaque
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: corteza-server-dev-pv
+  namespace: corteza-dev
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: longhorn
+  volumeMode: Filesystem
+  #volumeName: pvc-10f1c636-a8d4-4633-8519-04b758745104
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,15 +56,21 @@ spec:
         - name: VIRTUAL_HOST
           value: corteza-dev.rabbahsoft.ma
         - name: DB_DSN
-          value: sqlite3://file::memory:?cache=shared&mode=memory
+          valueFrom:
+            secretKeyRef:
+              key: corteza-dsn
+              name: corteza-dev-secrets
+              optional: false
         - name: HTTP_WEBAPP_ENABLED
-          value: "true"
+          value: "false"
         - name: LOG_LEVEL
-          value: info
+          value: "info"
         - name: LOG_DEBUG
           value: "true"
         - name: CORREDOR_ENABLED
-          value: "false"
+          value: "true"
+        - name: CORREDOR_ADDR
+          value: "corredor-svc:80"
         - name: HTTP_SERVER_WEB_CONSOLE_ENABLED
           value: "true"
         - name: HTTP_SERVER_WEB_CONSOLE_USERNAME
@@ -39,19 +81,57 @@ spec:
           value: "false"
         - name: ENVIRONMENT
           value: dev
+        - name: LETSENCRYPT_HOST
+          value: corteza-dev.rabbahsoft.ma
         image: mrabbah/corteza-server:r2022.3.1.x
         imagePullPolicy: Always
+        startupProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthcheck
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthcheck
+            port: 80
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthcheck
+            port: 80
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
         name: corteza-server-container
         ports:
         - containerPort: 80
           name: http
           protocol: TCP
+        volumeMounts:
+        - mountPath: /data
+          name: vol-corteza-server-dev
+        resources: {}
       restartPolicy: Always
+      volumes:
+      - name: vol-corteza-server-dev
+        persistentVolumeClaim:
+          claimName: corteza-server-dev-pv
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: corteza-svc
+  name: corteza-server-svc
   namespace: corteza-dev
 spec:
   ports:
@@ -63,22 +143,3 @@ spec:
     workload.user.cattle.io/workloadselector: apps.deployment-default-corteza-server
   sessionAffinity: None
   type: ClusterIP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: corteza-ingress
-  namespace: corteza-dev
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: corteza-dev.rabbahsoft.ma
-    http:
-      paths:
-      - backend:
-          service:
-            name: corteza-svc
-            port:
-              number: 80
-        path: /
-        pathType: Prefix

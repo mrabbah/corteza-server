@@ -2,10 +2,10 @@ pipeline {
     agent any
    
     environment {
-        NEXUS_CREDS = credentials('nexus-credentials')
-        CORTEZA_VERSION = "2022.3.4"
         DOCKERHUB_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
+        MINIO_CREDS = credentials('minio-credentials')
+        MINIO_HOST = "https://minio.rabbahsoft.ma:9900"
     }
     stages {
         stage('Test') {
@@ -47,15 +47,24 @@ pipeline {
                 sh 'rm -f ./build/pkg/corteza-server/provision/README.adoc ./build/pkg/corteza-server/provision/update.sh'
                 sh 'cp ./build/corteza-server-${BRANCH_NAME} ./build/pkg/corteza-server/bin/corteza-server'
                 sh 'tar -C ./build/pkg/ -czf ./build/corteza-server-${BRANCH_NAME}.tar.gz corteza-server'
-                sh 'curl -v --user $NEXUS_CREDS --upload-file ./build/corteza-server-${BRANCH_NAME}.tar.gz https://nexus.rabbahsoft.ma/repository/row-repo/corteza-server-${BRANCH_NAME}.tar.gz'
+            }
+        }
+        stage('Pushing Artifact') {
+            agent {
+                docker { 
+                    image 'mrabbah/mc:1.1'
+                    reuseNode true
+                } 
+            }
+            steps {
+                sh 'mc --config-dir /tmp/.mc alias set minio $MINIO_HOST $MINIO_CREDS_USR $MINIO_CREDS_PSW'
+                sh 'mc --config-dir /tmp/.mc cp ./build/corteza-server-${BRANCH_NAME}.tar.gz minio/corteza-artifacts'               
             }
         }
         stage('Build Docker image') {
             
             steps {
-                sh 'curl -v --user $NEXUS_CREDS https://nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-${CORTEZA_VERSION}.tar.gz --output ./build/corteza-webapp-${CORTEZA_VERSION}.tar.gz'
-                sh 'curl -v --user $NEXUS_CREDS https://nexus.rabbahsoft.ma/repository/row-repo/corteza-webapp-compose-${BRANCH_NAME}.tar.gz --output ./build/corteza-webapp-compose-${BRANCH_NAME}.tar.gz'
-                sh 'docker build -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} --build-arg CORTEZA_VERSION=${CORTEZA_VERSION} --build-arg NEXUS_CREDS=${NEXUS_CREDS} . '
+                sh 'docker build -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} . '
             }
         }
         
