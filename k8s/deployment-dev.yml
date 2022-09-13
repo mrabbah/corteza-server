@@ -13,26 +13,13 @@ data:
   uri: cG9zdGdyZXNxbDovL2NvcnRlemEtZGV2LXVzZXI6Z00lM0VMRGYzJTNFZGxzYk5TU0glN0NVcFlUMERDQGhpcHBvLWhhLXByaW1hcnkucGdvLnN2Yzo1NDMyL2NvcnRlemEtZGV2LWRi
   user: Y29ydGV6YS1kZXYtdXNlcg==
   verifier: U0NSQU0tU0hBLTI1NiQ0MDk2OjBoVzM0S1c3UDFlQ3FMNHI3R2xaTHc9PSRnKzlxUCtRTW5lNnVhbHVGYU1SVjBlcTA0K00xcHpFczNjZHptTTlPTTNNPTowdjJrWmlFRlp4VkdKeHpza2pLWHBrM0c2RDM0clpOQ0JZNFIyMHJETnhBPQ==
+  web-console-pwd: Q1hydHZuTjZBNnNpMmt6
+  web-console-username: Y29udGFjdEByYWJiYWhzb2Z0Lm1h
 kind: Secret
 metadata:
   name: corteza-dev-secrets
   namespace: corteza-dev
 type: Opaque
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: corteza-server-dev-pv
-  namespace: corteza-dev
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
-  storageClassName: longhorn
-  volumeMode: Filesystem
-  #volumeName: pvc-10f1c636-a8d4-4633-8519-04b758745104
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -68,22 +55,30 @@ spec:
         - name: LOG_DEBUG
           value: "true"
         - name: CORREDOR_ENABLED
-          value: "true"
+          value: "false"
         - name: CORREDOR_ADDR
-          value: "corredor-svc:80"
+          value: "corredor-svc:50051"
         - name: HTTP_SERVER_WEB_CONSOLE_ENABLED
           value: "true"
         - name: HTTP_SERVER_WEB_CONSOLE_USERNAME
-          value: contact@rabbahsoft.ma
+          valueFrom:
+            secretKeyRef:
+              key: web-console-username
+              name: corteza-dev-secrets
+              optional: false
         - name: HTTP_SERVER_WEB_CONSOLE_PASSWORD
-          value: CXrtvnN6A6si2kz
+          valueFrom:
+            secretKeyRef:
+              key: web-console-pwd
+              name: corteza-dev-secrets
+              optional: false
         - name: DISCOVERY_ENABLED
           value: "false"
         - name: ENVIRONMENT
           value: dev
         - name: LETSENCRYPT_HOST
           value: corteza-dev.rabbahsoft.ma
-        image: mrabbah/corteza-server:r2022.3.1.x
+        image: mrabbah/corteza-server:TAG_NAME
         imagePullPolicy: Always
         startupProbe:
           failureThreshold: 3
@@ -118,15 +113,8 @@ spec:
         - containerPort: 80
           name: http
           protocol: TCP
-        volumeMounts:
-        - mountPath: /data
-          name: vol-corteza-server-dev
         resources: {}
       restartPolicy: Always
-      volumes:
-      - name: vol-corteza-server-dev
-        persistentVolumeClaim:
-          claimName: corteza-server-dev-pv
 ---
 apiVersion: v1
 kind: Service
@@ -143,3 +131,57 @@ spec:
     workload.user.cattle.io/workloadselector: apps.deployment-default-corteza-server
   sessionAffinity: None
   type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+    nginx.org/client-max-body-size: 20m
+  name: corteza-server-ingress
+  namespace: corteza-dev
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: corteza-dev.rabbahsoft.ma
+    http:
+      paths:
+      - backend:
+          service:
+            name: corteza-server-svc
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: corteza-server-svc
+            port:
+              number: 80
+        path: /version
+        pathType: Prefix
+      - backend:
+          service:
+            name: corteza-server-svc
+            port:
+              number: 80
+        path: /console
+        pathType: Prefix
+      - backend:
+          service:
+            name: corteza-server-svc
+            port:
+              number: 80
+        path: /api
+        pathType: Prefix
+      - backend:
+          service:
+            name: corteza-server-svc
+            port:
+              number: 80
+        path: /auth
+        pathType: Prefix
+
+
+
+
