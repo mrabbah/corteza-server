@@ -57,7 +57,7 @@ spec:
         - name: CORREDOR_ENABLED
           value: "false"
         - name: CORREDOR_ADDR
-          value: "corredor-svc:50051"
+          value: "corredor-svc:80"
         - name: HTTP_SERVER_WEB_CONSOLE_ENABLED
           value: "true"
         - name: HTTP_SERVER_WEB_CONSOLE_USERNAME
@@ -143,7 +143,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: corteza-dev.rabbahsoft.ma
+  - host: cortezadev.rabbahsoft.ma
     http:
       paths:
       - backend:
