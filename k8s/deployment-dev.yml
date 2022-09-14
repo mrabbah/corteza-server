@@ -4,12 +4,22 @@ data:
   dbname: Y29ydGV6YS1kZXYtZGI=
   host: aGlwcG8taGEtcHJpbWFyeS5wZ28uc3Zj
   jdbc-uri: amRiYzpwb3N0Z3Jlc3FsOi8vaGlwcG8taGEtcHJpbWFyeS5wZ28uc3ZjOjU0MzIvY29ydGV6YS1kZXYtZGI/cGFzc3dvcmQ9Z00lM0VMRGYzJTNFZGxzYk5TU0glN0NVcFlUMERDJnVzZXI9Y29ydGV6YS1kZXYtdXNlcg==
+  minio-access-key: bWluaW9hZG1pbg==
+  minio-bucket: Y29ydGV6YS1kZXYtdXBsb2FkLWRhdGE=
+  minio-endpoint: bWluaW8ucmFiYmFoc29mdC5tYTo5OTAw
+  minio-host: aHR0cHM6Ly9taW5pby5yYWJiYWhzb2Z0Lm1hOjk5MDA=
+  minio-secret-key: bUp3Zko2SEFh
   password: Z00+TERmMz5kbHNiTlNTSHxVcFlUMERD
   pgbouncer-host: aGlwcG8taGEtcGdib3VuY2VyLnBnby5zdmM=
   pgbouncer-jdbc-uri: amRiYzpwb3N0Z3Jlc3FsOi8vaGlwcG8taGEtcGdib3VuY2VyLnBnby5zdmM6NTQzMi9jb3J0ZXphLWRldi1kYj9wYXNzd29yZD1nTSUzRUxEZjMlM0VkbHNiTlNTSCU3Q1VwWVQwREMmcHJlcGFyZVRocmVzaG9sZD0wJnVzZXI9Y29ydGV6YS1kZXYtdXNlcg==
   pgbouncer-port: NTQzMg==
   pgbouncer-uri: cG9zdGdyZXNxbDovL2NvcnRlemEtZGV2LXVzZXI6Z00lM0VMRGYzJTNFZGxzYk5TU0glN0NVcFlUMERDQGhpcHBvLWhhLXBnYm91bmNlci5wZ28uc3ZjOjU0MzIvY29ydGV6YS1kZXYtZGI=
   port: NTQzMg==
+  smtp-from: Y29udGFjdEByYWJiYWhzb2Z0Lm1h
+  smtp-host: c210cC5nbWFpbC5jb20=
+  smtp-pass: IzFBYmNkQC5jb20=
+  smtp-port: NTg3
+  smtp-user: Y29udGFjdEByYWJiYWhzb2Z0Lm1h
   uri: cG9zdGdyZXNxbDovL2NvcnRlemEtZGV2LXVzZXI6Z00lM0VMRGYzJTNFZGxzYk5TU0glN0NVcFlUMERDQGhpcHBvLWhhLXByaW1hcnkucGdvLnN2Yzo1NDMyL2NvcnRlemEtZGV2LWRi
   user: Y29ydGV6YS1kZXYtdXNlcg==
   verifier: U0NSQU0tU0hBLTI1NiQ0MDk2OjBoVzM0S1c3UDFlQ3FMNHI3R2xaTHc9PSRnKzlxUCtRTW5lNnVhbHVGYU1SVjBlcTA0K00xcHpFczNjZHptTTlPTTNNPTowdjJrWmlFRlp4VkdKeHpza2pLWHBrM0c2RDM0clpOQ0JZNFIyMHJETnhBPQ==
@@ -48,16 +58,16 @@ spec:
               key: corteza-dsn
               name: corteza-dev-secrets
               optional: false
-        - name: HTTP_WEBAPP_ENABLED
-          value: "false"
+        - name: HTTP_API_BASE_URL
+          value: /api
         - name: LOG_LEVEL
           value: info
         - name: LOG_DEBUG
           value: "true"
         - name: CORREDOR_ENABLED
-          value: "false"
+          value: "true"
         - name: CORREDOR_ADDR
-          value: corredor-svc:80
+          value: corredor-svc:50051
         - name: HTTP_SERVER_WEB_CONSOLE_ENABLED
           value: "true"
         - name: HTTP_SERVER_WEB_CONSOLE_USERNAME
@@ -78,6 +88,102 @@ spec:
           value: dev
         - name: LETSENCRYPT_HOST
           value: cortezadev.rabbahsoft.ma
+        - name: HTTP_API_ENABLED
+          value: "true"
+        - name: APIGW_ENABLED
+          value: "true"
+        - name: APIGW_DEBUG
+          value: "true"
+        - name: APIGW_PROFILER_ENABLED
+          value: "true"
+        - name: APIGW_PROFILER_GLOBAL
+          value: "true"
+        - name: APIGW_LOG_REQUEST_BODY
+          value: "true"
+        - name: APIGW_PROXY_ENABLE_DEBUG_LOG
+          value: "true"
+        - name: APIGW_PROXY_OUTBOUND_TIMEOUT
+          value: 30s
+        - name: LOCALE_LANGUAGES
+          value: en
+        - name: LOCALE_RESOURCE_TRANSLATIONS_ENABLED
+          value: "true"
+        - name: LOCALE_LOG
+          value: "true"
+        - name: LOCALE_DEVELOPMENT_MODE
+          value: "false"
+        - name: MESSAGEBUS_ENABLED
+          value: "true"
+        - name: MESSAGEBUS_LOG_ENABLED
+          value: "true"
+        - name: PLUGINS_ENABLED
+          value: "false"
+        - name: MINIO_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              key: minio-endpoint
+              name: corteza-dev-secrets
+              optional: false
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: minio-access-key
+              name: corteza-dev-secrets
+              optional: false
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: minio-secret-key
+              name: corteza-dev-secrets
+              optional: false
+        - name: MINIO_SECURE
+          value: "true"
+        - name: MINIO_PATH_PREFIX
+          value: cortezadev-data
+        - name: MINIO_BUCKET
+          value: corteza-dev-upload-data
+        - name: SMTP_HOST
+          valueFrom:
+            secretKeyRef:
+              key: smtp-host
+              name: corteza-dev-secrets
+              optional: false
+        - name: SMTP_PORT
+          valueFrom:
+            secretKeyRef:
+              key: smtp-port
+              name: corteza-dev-secrets
+              optional: false
+        - name: SMTP_USER
+          valueFrom:
+            secretKeyRef:
+              key: smtp-user
+              name: corteza-dev-secrets
+              optional: false
+        - name: SMTP_PASS
+          valueFrom:
+            secretKeyRef:
+              key: smtp-pass
+              name: corteza-dev-secrets
+              optional: false
+        - name: SMTP_FROM
+          valueFrom:
+            secretKeyRef:
+              key: smtp-from
+              name: corteza-dev-secrets
+              optional: false
+        - name: TEMPLATE_RENDERER_GOTENBERG_ADDRESS
+          value: gotenberg-svc:3000
+        - name: TEMPLATE_RENDERER_GOTENBERG_ENABLED
+          value: "true"
+        - name: CORREDOR_RUN_AS_ENABLED
+          value: "true"
+        - name: CORREDOR_CLIENT_CERTIFICATES_ENABLED
+          value: "false"
+        - name: CORREDOR_MAX_BACKOFF_DELAY
+          value: 1m
+        - name: CORREDOR_LIST_TIMEOUT
+          value: 10s
         image: mrabbah/corteza-server:TAG_NAME
         imagePullPolicy: Always
         livenessProbe:
@@ -151,13 +257,6 @@ spec:
             name: corteza-server-svc
             port:
               number: 80
-        path: /
-        pathType: Prefix
-      - backend:
-          service:
-            name: corteza-server-svc
-            port:
-              number: 80
         path: /version
         pathType: Prefix
       - backend:
@@ -188,8 +287,10 @@ spec:
               number: 80
         path: /healthcheck
         pathType: Prefix
-        
-
-
-
-
+      - backend:
+          service:
+            name: corteza-server-svc
+            port:
+              number: 80
+        path: /assets
+        pathType: Prefix
