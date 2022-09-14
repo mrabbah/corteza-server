@@ -229,6 +229,8 @@ spec:
           value: 1m
         - name: CORREDOR_LIST_TIMEOUT
           value: 10s
+        - name: CORREDOR_LIST_REFRESH
+          value: 10s
         image: mrabbah/corteza-server:TAG_NAME
         imagePullPolicy: Always
         livenessProbe:
