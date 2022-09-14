@@ -35,6 +35,51 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    workload.user.cattle.io/workloadselector: apps.deployment-corteza-dev-gotenberg-dev
+  name: gotenberg-dev
+  namespace: corteza-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: apps.deployment-corteza-dev-gotenberg-dev
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: apps.deployment-corteza-dev-gotenberg-dev
+    spec:
+      containers:
+      - image: gotenberg/gotenberg:7
+        imagePullPolicy: IfNotPresent
+        name: gotenberg-0
+        ports:
+        - containerPort: 3000
+          name: gotenberg-svc
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+      securityContext: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gotenberg-svc
+  namespace: corteza-dev
+spec:
+  ports:
+  - name: tcp-3000
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    workload.user.cattle.io/workloadselector: apps.deployment-corteza-dev-gotenberg-dev
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
     workload.user.cattle.io/workloadselector: apps.deployment-default-corteza-server
   name: corteza-server
   namespace: corteza-dev
