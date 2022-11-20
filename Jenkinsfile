@@ -39,8 +39,8 @@ pipeline {
                         - name: DOCKER_TLS_CERTDIR
                           value: ""             
                 '''
-                //workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace', readOnly: false)
-                workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "8Gi")
+                workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'pvc-corteza-server-pipeline', readOnly: false)
+                //workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "8Gi")
         }      
     }
    
