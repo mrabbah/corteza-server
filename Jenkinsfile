@@ -39,7 +39,7 @@ pipeline {
                         - name: DOCKER_TLS_CERTDIR
                           value: ""             
                 '''
-                //workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'pvc-corteza-server-pipeline', readOnly: false)
+                workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'pvc-workspace', readOnly: false)
                 //workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "8Gi")
         }      
     }
@@ -55,6 +55,9 @@ pipeline {
         stage('Test') {
             steps {
                 container('golang') {
+                    sh 'echo XXXXXXXXXXXXXXXXXXXXXXXX'
+                    sh 'echo $MINIO_CREDS_USR'
+                    sh 'echo $MINIO_CREDS_PSW'
                     sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
                 }              
             }
