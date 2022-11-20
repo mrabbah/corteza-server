@@ -25,16 +25,16 @@ pipeline {
                     - name: docker
                       image: docker:20.10.21
                       command:
-                      - sleep
+                        - sleep
                       args:
-                      - 99d
+                        - 99d
                       env:
-                      - name: DOCKER_HOST
-                        value: tcp://localhost:2375
+                        - name: DOCKER_HOST
+                          value: tcp://localhost:2375
                     - name: docker-daemon
                       image: docker:20.10.21-dind
                       securityContext:
-                      privileged: true
+                        privileged: true
                       env:
                       - name: DOCKER_TLS_CERTDIR
                         value: ""             
