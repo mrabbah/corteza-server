@@ -5,38 +5,39 @@ pipeline {
                 apiVersion: v1
                 kind: Pod
                 metadata:
-                labels:
+                  namespace: ci
+                  labels:
                     pod-name: corteza-server-builder
                 spec:
-                containers:
-                - name: golang
-                  image: golang:1.17.13
-                  command: ["tail", "-f", "/dev/null"]
-                  tty: true
-                - name: node
-                  image: node:16.16.0
-                  command: ["tail", "-f", "/dev/null"]
-                  tty: true
-                - name: mc
-                  image: mrabbah/mc:1.1
-                  command: ["tail", "-f", "/dev/null"]
-                  tty: true 
-                - name: docker
-                  image: docker:20.10.21
-                  command:
-                  - sleep
-                  args:
-                  - 99d
-                  env:
-                  - name: DOCKER_HOST
-                    value: tcp://localhost:2375
-                - name: docker-daemon
-                  image: docker:20.10.21-dind
-                  securityContext:
-                  privileged: true
-                  env:
-                  - name: DOCKER_TLS_CERTDIR
-                    value: ""             
+                  containers:
+                    - name: golang
+                      image: golang:1.17.13
+                      command: ["tail", "-f", "/dev/null"]
+                      tty: true
+                    - name: node
+                      image: node:16.16.0
+                      command: ["tail", "-f", "/dev/null"]
+                      tty: true
+                    - name: mc
+                      image: mrabbah/mc:1.1
+                      command: ["tail", "-f", "/dev/null"]
+                      tty: true 
+                    - name: docker
+                      image: docker:20.10.21
+                      command:
+                      - sleep
+                      args:
+                      - 99d
+                      env:
+                      - name: DOCKER_HOST
+                        value: tcp://localhost:2375
+                    - name: docker-daemon
+                      image: docker:20.10.21-dind
+                      securityContext:
+                      privileged: true
+                      env:
+                      - name: DOCKER_TLS_CERTDIR
+                        value: ""             
                 '''
                 //workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace', readOnly: false)
                 //workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "2Gi")
