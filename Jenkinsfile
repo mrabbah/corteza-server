@@ -30,14 +30,14 @@ pipeline {
                         - 99d
                       env:
                         - name: DOCKER_HOST
-                          value: tcp://localhost:2375
+                          value: tcp://docker-daemon:2375
                     - name: docker-daemon
                       image: docker:20.10.21-dind
                       securityContext:
                         privileged: true
                       env:
-                      - name: DOCKER_TLS_CERTDIR
-                        value: ""             
+                        - name: DOCKER_TLS_CERTDIR
+                          value: ""             
                 '''
                 //workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace', readOnly: false)
                 //workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "2Gi")
