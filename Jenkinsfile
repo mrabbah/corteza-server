@@ -40,7 +40,7 @@ pipeline {
                           value: ""             
                 '''
                 //workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace', readOnly: false)
-                //workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "2Gi")
+                workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "8Gi")
         }      
     }
    
