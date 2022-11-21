@@ -56,13 +56,13 @@ pipeline {
             steps {
                 container('golang') {
                     sh 'echo XXXXXXXXXXXXXXXXXXXXXXXX'
-                    sh 'echo $MINIO_CREDS_USR'
-                    sh 'echo $MINIO_CREDS_PSW'
-                    sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
+                    sh 'myvar=$MINIO_CREDS_PSW'
+                    sh 'echo $myvar'
+                    //sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
                 }              
             }
         }
-        stage('Build Web Console') {
+        /*stage('Build Web Console') {
             steps {
                 container('node') {
                     sh 'cd ./webconsole && yarn install && yarn build && cd ..'
@@ -112,7 +112,7 @@ pipeline {
                 }            
                 
             }
-        }
+        }*/
 
     }
 }
