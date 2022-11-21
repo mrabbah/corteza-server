@@ -39,7 +39,7 @@ pipeline {
                         - name: DOCKER_TLS_CERTDIR
                           value: ""             
                 '''
-                workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'pvc-workspace', readOnly: false)
+                //workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'pvc-workspace', readOnly: false)
                 //workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: "8Gi")
         }      
     }
