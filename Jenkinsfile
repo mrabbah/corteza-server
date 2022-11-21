@@ -48,7 +48,7 @@ pipeline {
         DOCKERHUB_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
         MINIO_CREDS = credentials('minio-credentials')
-        MINIO_HOST = "https://minio-api.rabbahsoft.ma"
+        MINIO_HOST = "http://minio.data:9000"
     }
     
     stages {
