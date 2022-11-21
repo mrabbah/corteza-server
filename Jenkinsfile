@@ -48,21 +48,18 @@ pipeline {
         DOCKERHUB_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
         MINIO_CREDS = credentials('minio-credentials')
-        MINIO_HOST = "http://minio.data:9900"
+        MINIO_HOST = "http://minio.data:9000"
     }
     
     stages {
         stage('Test') {
             steps {
                 container('golang') {
-                    sh 'echo XXXXXXXXXXXXXXXXXXXXXXXX'
-                    sh 'myvar=$MINIO_CREDS_PSW'
-                    sh 'echo $myvar'
-                    //sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
+                    sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
                 }              
             }
         }
-        /*stage('Build Web Console') {
+        stage('Build Web Console') {
             steps {
                 container('node') {
                     sh 'cd ./webconsole && yarn install && yarn build && cd ..'
@@ -112,7 +109,7 @@ pipeline {
                 }            
                 
             }
-        }*/
+        }
 
     }
 }
