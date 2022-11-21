@@ -52,7 +52,7 @@ pipeline {
     }
     
     stages {
-        /*stage('Test') {
+        stage('Test') {
             steps {
                 container('golang') {
                     sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
@@ -80,16 +80,16 @@ pipeline {
                     sh 'tar -C ./build/pkg/ -czf ./build/corteza-server-${BRANCH_NAME}.tar.gz corteza-server' 
                 }  
             }
-        }*/
+        }
         stage('Pushing Artifact') {
             steps {
                 container('mc') {
                     sh 'mc --config-dir /tmp/.mc alias set minio $MINIO_HOST $MINIO_CREDS_USR $MINIO_CREDS_PSW'
-                    //sh 'mc --config-dir /tmp/.mc cp ./build/corteza-server-${BRANCH_NAME}.tar.gz minio/corteza-artifacts'             
+                    sh 'mc --config-dir /tmp/.mc cp ./build/corteza-server-${BRANCH_NAME}.tar.gz minio/corteza-artifacts'             
                 }   
             }
         }
-        /*stage('Build Docker image') {
+        stage('Build Docker image') {
             steps {
                 container('docker') {
                     sh 'docker build -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} . '             
@@ -109,7 +109,7 @@ pipeline {
                 }            
                 
             }
-        }*/
+        }
 
     }
 }
