@@ -84,7 +84,7 @@ pipeline {
         stage('Pushing Artifact') {
             steps {
                 container('mc') {
-                    sh 'cat $MINIO_HOST > /tmp/.mc && cat $MINIO_CREDS_USR >> /tmp/.mc && cat $MINIO_CREDS_PSW >> /tmp/.mc && cat /tmp/.mc'
+                    sh 'echo $MINIO_HOST > /tmp/.mc && echo $MINIO_CREDS_USR >> /tmp/.mc && echo $MINIO_CREDS_PSW >> /tmp/.mc && cat /tmp/.mc'
                     //sh 'mc --config-dir /tmp/.mc alias set minio $MINIO_HOST $MINIO_CREDS_USR $MINIO_CREDS_PSW'
                     //sh 'mc --config-dir /tmp/.mc cp ./build/corteza-server-${BRANCH_NAME}.tar.gz minio/corteza-artifacts'             
                 }   
