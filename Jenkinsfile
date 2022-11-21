@@ -29,6 +29,13 @@ pipeline {
                       env:
                         - name: DOCKER_TLS_CERTDIR
                           value: ""     
+                      resources: 
+                        requests:
+                          cpu: 500m
+                          memory: 1Gi
+                        limits:
+                          cpu: 1
+                          memory: 4Gi
                     - name: docker
                       image: docker:20.10.21
                       command:
@@ -55,8 +62,7 @@ pipeline {
         stage('Test') {
             steps {
                 container('golang') {
-                    sh 'echo skip'
-                    //sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
+                    sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
                 }              
             }
         }
