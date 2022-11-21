@@ -19,7 +19,7 @@ pipeline {
                       command: ["tail", "-f", "/dev/null"]
                       tty: true
                     - name: mc
-                      image: mrabbah/mc:1.1
+                      image: mrabbah/mc:1.2
                       command: ["tail", "-f", "/dev/null"]
                       tty: true 
                     - name: docker
