@@ -48,7 +48,7 @@ pipeline {
         DOCKERHUB_CREDS = credentials('dockerhub-credentials')
         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
         MINIO_CREDS = credentials('minio-credentials')
-        MINIO_HOST = "http://minio.data:9000"
+        MINIO_HOST = "https://minio-api.rabbahsoft.ma"
     }
     
     stages {
@@ -84,7 +84,7 @@ pipeline {
         stage('Pushing Artifact') {
             steps {
                 container('mc') {
-                    sh 'until (mc --config-dir /tmp/.mc alias set minio $MINIO_HOST $MINIO_CREDS_USR $MINIO_CREDS_PSW) do echo "...waiting..." && sleep 1; done;'
+                    sh 'mc --config-dir /tmp/.mc alias set minio $MINIO_HOST $MINIO_CREDS_USR $MINIO_CREDS_PSW'
                     //sh 'mc --config-dir /tmp/.mc cp ./build/corteza-server-${BRANCH_NAME}.tar.gz minio/corteza-artifacts'             
                 }   
             }
