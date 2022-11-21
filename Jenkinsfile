@@ -31,10 +31,10 @@ pipeline {
                           value: ""     
                       resources: 
                         requests:
-                          cpu: 500m
+                          cpu: 1
                           memory: 1Gi
                         limits:
-                          cpu: 1
+                          cpu: 4
                           memory: 4Gi
                     - name: docker
                       image: docker:20.10.21
