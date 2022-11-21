@@ -99,7 +99,7 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 container('docker') {
-                    sh 'docker build -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} . '             
+                    sh 'docker build --network host -t mrabbah/corteza-server:${BRANCH_NAME} --build-arg VERSION=${BRANCH_NAME} . '             
                 }                
             }
         }
