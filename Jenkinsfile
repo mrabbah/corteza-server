@@ -59,13 +59,13 @@ pipeline {
     }
     
     stages {
-        stage('Test') {
+        /*stage('Test') {
             steps {
                 container('golang') {
                     sh 'GOCACHE=/tmp/.cache/go-build GOENV=/tmp/.config/go/env GOMODCACHE=/tmp/go/pkg/mod go test ./pkg/... ./app/... ./compose/... ./system/... ./federation/... ./auth/... ./automation/... ./tests/... ./store/tests/...'
                 }              
             }
-        }
+        }*/
         stage('Build Web Console') {
             steps {
                 container('node') {

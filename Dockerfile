@@ -10,7 +10,9 @@ RUN mkdir /tmp/server
 
 ADD $CORTEZA_SERVER_PATH /tmp/server
 
-RUN apk update && apk add --no-cache file
+RUN apk update 
+
+RUN apk add --no-cache file
 
 RUN file "/tmp/server/$(basename $CORTEZA_SERVER_PATH)" | grep -q 'gzip' && \
     tar zxvf "/tmp/server/$(basename $CORTEZA_SERVER_PATH)" -C / || \
